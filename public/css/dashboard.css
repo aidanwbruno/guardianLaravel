@@ -1,0 +1,28 @@
+#root {
+    padding: 5%;
+    background-color: black;
+}
+
+.flex {
+    display: flex;
+}
+
+.table-header {
+    padding: 8px;
+    width: 100%;
+}
+
+.table-header h3 {
+    padding: 8px;
+    min-width: 200px;
+}
+
+.table-content {
+    padding: 8px;
+    width: 100%;
+}
+
+.table-content div {
+    padding: 8px;
+    min-width: 200px;
+}
