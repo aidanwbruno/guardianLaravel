@@ -43,7 +43,7 @@ function loadCollectionbyField(db, callection, field, value, callback) {
 
 
 function loadSubCollection(db, name, docId, subCollection, callback) {
-    db.collection(name).doc(docId).collection(subCollection).onSnapshot(function (querySnapshot) {
+    db.collection(name).doc(docId).collection(subCollection).get().then(function (querySnapshot) {
         callback(querySnapshot);
     });
 }
@@ -165,9 +165,16 @@ function loadUsers(db) {
 
 function loadLocationsofUser(db, userId) {
     loadSubCollection(db, "USUARIOS", userId.toString(), "LOCATIONS", (list) => {
+        var html = "";
+        var table = tag("tblUserLocations");
         list.forEach((doc) => {
-            console.log("" + doc.data().point);
+            var location = doc.data();
+            html += "<tr>"
+                + "<td>" + milliToDate(location.createdAt).toLocaleString() + "</td>"
+                + "<td>" + location.point + "</td>"
+                + "</tr>"
         });
+        table.innerHTML = html;
     });
 }
 
@@ -177,21 +184,20 @@ function loadLocationsofUser(db, userId) {
 //======================== ALERTS ===========================================================
 
 
-
-
 function createAlertRowTable(doc) {
     var alertData = doc.data();
     var status = "Ativo";
+    var dateTime = milliToDate(alertData.createdAt).toLocaleString();
     if (alertData.open == false) {
         status = "Resolvido";
     }
     return " <tr>"
-        + "<td id='" + alertData.usuarioKey + "'>" + alertData.usuarioKey + "</td>"
+        + "<td id='" + alertData.usuarioKey + "'>carregando...</td>"
         + "<td>localização</td>"
-        + "<td>" + milliToDate(alertData.createdAt).toLocaleString() + "</td>"
+        + "<td>" + dateTime + "</td>"
         + "<td>" + status + "</td>"
         + "<td>"
-        + "  <a href='/alert/" + doc.id + "?id=" + doc.data() + "'>Ver Alerta</a>"
+        + "  <a href='/alert/" + doc.id + "?uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "'>Ver Alerta</a>"
         + "</td></tr>";
 }
 

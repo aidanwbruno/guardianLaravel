@@ -19,7 +19,7 @@
         <table class="table">
           <thead class=" text-primary">
             <th>Usuário</th>
-            <th>Data</th>
+            <th>Última Localização</th>
             <th>Data/Hora</th>
             <th>Status</th>
             <th>Opções</th>

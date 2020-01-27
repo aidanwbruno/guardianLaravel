@@ -26,7 +26,7 @@
     <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
           <div class="logo" style="text-align: center;">
         <a href="#">
-          Guardian Logo Here
+            <img width="70%" src="{{asset('img/app_logo.png')}}">
         </a>
       </div>
       <div class="sidebar-wrapper">
@@ -58,7 +58,7 @@
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
         <div class="container-fluid">
           <div class="navbar-wrapper">
-            <a class="navbar-brand" href="#pablo">Painel de Controle</a>
+            <a class="navbar-brand" href="#">Painel de Controle</a>
           </div>
           <div class="collapse navbar-collapse justify-content-end">
             <ul class="navbar-nav">

@@ -15,7 +15,7 @@
     <div class="card">
         <div class="card-header card-header-primary">
         <h4 class="card-title ">Usuário</h4>
-        <p class="card-category">Miguel Vieira</p>
+        <p class="card-category">{{request()->name}}</p>
         </div>
         <div class="card-body">
         <div class="table-responsive">
@@ -48,22 +48,25 @@
   <div class="card">
     <div class="card-header card-header-warning">
     <h4 class="card-title ">Histórico de Localização</h4>
-    <p class="card-category">últimas localizações do usuário</p>
+    <p class="card-category">Últimas localizações do usuário</p>
     </div>
     <div class="card-body">
     <div class="table-responsive">
         <table class="table">
         <thead class=" text-primary">
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Última Localização </th>
-            <th>Status</th>
-            <th>Opções</th>
+            <th>Data e Hora</th>
+            <th>Última Localização</th>
         </thead>
-        <tbody id="tblUsers">
+        <tbody id="tblUserLocations">
         </tbody>
         </table>
     </div>
     </div>
 </div>
 @endsection
+
+<!--
+    Falta Colocar CreatedAt na coleção Locations
+    Falta converter a localização 
+    Falta Corrigir Layout
+-->

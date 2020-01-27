@@ -86,3 +86,10 @@
     </div>
   </div>
 @endsection
+
+<!--
+  Falta organizar o Histórico de ativações, pois estas informações não se encontram no App android.
+  Falta COnverter Lat Lng em Endereço real ou usar um mapa. 
+  Falta a Paginação
+  Falta Organizar layout ex: menu
+-->
