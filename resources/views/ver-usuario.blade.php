@@ -27,6 +27,12 @@
         var db = getFireDB(firebase);
         //loadUsers(db);
         loadLocationsofUser(db, '{{request()->uid}}');
+        var lat = '{{request()->lat}}';
+        var log = '{{request()->log}}';
+    
+        getAdress(lat, log, (json) => {
+                setValList("my_last_location", json.locality + ", " + json.principalSubdivision);
+        });
     </script>    
 @endsection
 
@@ -52,7 +58,7 @@
                 <tr>
                     <td>{{request()->id}}</td>
                     <td>{{request()->name}}</td>
-                    <td>{{request()->location}}</td>
+                    <td id="my_last_location">{{request()->location}}</td>
                     <td>{{request()->status}}</td>
                     <td>
                         <a href="/editar/user/{{request()->uid}}">Editar</a>

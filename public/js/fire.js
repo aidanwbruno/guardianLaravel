@@ -86,11 +86,9 @@ function milliToDate(mille) {
     //https://stackoverflow.com/questions/4673527/converting-milliseconds-to-a-date-jquery-javascript
 
     var date = new Date(mille);
-    console.log("Data em STR: " + date.toString());
+    //console.log("Data em STR: " + date.toString());
     return date;
 }
-
-// https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=37.42159&longitude=-122.0837&localityLanguage=en
 
 
 function createUserHistoryRow(doc) {
@@ -108,21 +106,28 @@ function createUserHistoryRowTable(doc) {
     var userData = doc.data();
     return " <tr><td>" + userData.name + "</td>"
         + "<td>" + milliToDate(userData.createdAt).toLocaleString() + "</td>"
-        + "<td> implementar </td></tr>";
+        + "<td id='loc_h_" + doc.id + "'>" + userData.ultimaLocalizacao + "</td></tr>";
 }
 
 function createUserRowTable(doc, id) {
     var userData = doc.data();
     var status = "Ativo";
+    var lat = toJson(userData.ultimaLocalizacao).latitude;
+    var log = toJson(userData.ultimaLocalizacao).longitude;
     return " <tr>"
         + "<td>" + id + "</td>"
         + "<td>" + userData.name + "</td>"
-        + "<td>implementar</td>"
+        + "<td id='loc_u_" + id + "'>" + userData.ultimaLocalizacao + "</td>"
         + "<td>" + status + "</td>"
         + "<td>"
         + "  <a href='/editar/user?user_id=" + doc.id + "'>Editar</a> | "
-        + "  <a href='/user/" + doc.id + "?id=" + id + "&name=" + userData.name + "&location=localizacao&status=" + status + "&uid=" + doc.id + "'>Ver Usúario</a>"
+        + "  <a href='/user/" + doc.id + "?id=" + id + "&name=" + userData.name + "&lat=" + lat + "&log=" + log + "&status=" + status + "&uid=" + doc.id + "'>Ver Usúario</a>"
         + "</td></tr>";
+}
+
+
+function toJson(string) {
+    return JSON.parse(string);
 }
 
 // ===================== HISTORICO ===================================
@@ -133,13 +138,20 @@ function loadUsersHistory(db) {
         var userTable = tag("tblhistory");
         var html = "";
         var id = 0;
+        userTable.innerHTML = "";
         list.forEach((doc) => {
             id++;
             html += createUserHistoryRowTable(doc);
-            console.log(name);
+            var data = doc.data();
+            var lat = toJson(data.ultimaLocalizacao).latitude;
+            var log = toJson(data.ultimaLocalizacao).longitude;
+            getAdress(lat, log, (json) => {
+                setValList("loc_h_" + doc.id, json.locality + ", " + json.principalSubdivision);
+            });
         });
         setVal("user-count", list.size);
         userTable.innerHTML += html;
+        //refresh();
     });
 }
 
@@ -171,12 +183,19 @@ function loadUserById(db, userId) {
 function loadUsers(db) {
     loadCollection(db, "USUARIOS", (list) => {
         var userTable = tag("tblUsers");
+        userTable.innerHTML = "";
         var html = "";
         var id = 0;
+
         list.forEach((doc) => {
             id++;
+            var data = doc.data();
             html += createUserRowTable(doc, id);
-            console.log(name);
+            var lat = toJson(data.ultimaLocalizacao).latitude;
+            var log = toJson(data.ultimaLocalizacao).longitude;
+            getAdress(lat, log, (json) => {
+                setValList("loc_u_" + id, json.locality + ", " + json.principalSubdivision);
+            });
         });
         setVal("user-count", list.size);
         userTable.innerHTML += html;
@@ -187,12 +206,21 @@ function loadLocationsofUser(db, userId) {
     loadSubCollection(db, "USUARIOS", userId.toString(), "LOCATIONS", (list) => {
         var html = "";
         var table = tag("tblUserLocations");
+        table.innerHTML = "";
         list.forEach((doc) => {
             var location = doc.data();
+            var lat = toJson(location.point).latitude;
+            var log = toJson(location.point).longitude;
+            var dat = toJson(location.point).createdAt;
+            var id = "al_" + doc.id;
             html += "<tr>"
-                + "<td>" + milliToDate(location.createdAt).toLocaleString() + "</td>"
-                + "<td>" + location.point + "</td>"
+                + "<td>" + milliToDate(dat).toLocaleString() + "</td>"
+                + "<td id='" + id + "'> carregando..</td>"
                 + "</tr>"
+
+            getAdress(lat, log, (json) => {
+                setValList(id, json.locality + ", " + json.principalSubdivision);
+            });
         });
         table.innerHTML = html;
     });
@@ -237,7 +265,7 @@ function updateUser(userId) {
                 //console.log("Document written with ID: ", docRef.data);
                 //addDocToTable(docRef)
                 alert("Documento Salvo");
-                window.location.reload(true);
+                refresh();
             }).catch(function (error) {
                 console.error("Error adding document: ", error);
             });
@@ -245,6 +273,10 @@ function updateUser(userId) {
     }
 }
 
+
+function refresh() {
+    window.location.reload(true);
+}
 
 
 function validateForm(form) {
@@ -318,16 +350,17 @@ function createAlertRowTable(doc) {
     var alertData = doc.data();
     var status = "Ativo";
     var dateTime = milliToDate(alertData.createdAt).toLocaleString();
+    var loc = toJson(alertData.ultimaLocalizacao);
     if (alertData.open == false) {
         status = "Resolvido";
     }
     return " <tr>"
-        + "<td id='" + alertData.usuarioKey + "'>carregando...</td>"
-        + "<td>localização</td>"
+        + "<td id='a_u" + alertData.usuarioKey + "'>carregando...</td>"
+        + "<td id='loc_a_" + doc.id + "'>" + alertData.ultimaLocalizacao + "</td>"
         + "<td>" + dateTime + "</td>"
         + "<td>" + status + "</td>"
         + "<td>"
-        + "  <a href='/alert/" + doc.id + "?uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "'>Ver Alerta</a>"
+        + "  <a href='/alert/" + doc.id + "?uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + loc.longitude + "&lat=" + loc.latitude + "'>Ver Alerta</a>"
         + "</td></tr>";
 }
 
@@ -337,23 +370,34 @@ function loadAlerts(db) {
     var html = "";
     var alertasResolvidos = 0;
     var alertasAbertos = 0;
-    loadCollectionbyField(db, "ALERTAS", "open", true, (list) => {
+    loadCollection(db, "ALERTAS", (list) => {
         alertasAbertos = 0;
         alertasResolvidos = 0;
         list.forEach((doc) => {
             var alerta = doc.data();
             if (alerta.open == true) {
                 alertasAbertos++;
-                html += createAlertRowTable(doc);
-                loadDocument(db, "USUARIOS", alerta.usuarioKey, (userDoc) => {
-                    if (userDoc.exists) {
-                        var user = userDoc.data();
-                        setValList(alerta.usuarioKey, user.name);
-                    }
-                });
+
+
             } else {
                 alertasResolvidos++;
             }
+
+            // coloque detro de true caso queira somente os ativos
+            html += createAlertRowTable(doc);
+            loadDocument(db, "USUARIOS", alerta.usuarioKey, (userDoc) => {
+                if (userDoc.exists) {
+                    var user = userDoc.data();
+                    setValList("a_u" + alerta.usuarioKey, user.name);
+                }
+            });
+
+            var data = doc.data();
+            var lat = toJson(alerta.ultimaLocalizacao).latitude;
+            var log = toJson(alerta.ultimaLocalizacao).longitude;
+            getAdress(lat, log, (json) => {
+                setValList("loc_a_" + doc.id, json.locality + ", " + json.principalSubdivision);
+            });
         });
         setVal("alert-count", alertasAbertos);
         setVal("closed-alert-count", alertasResolvidos);
@@ -378,5 +422,25 @@ function loadCountAlerts(db) {
         });
         setVal("alert-count", alertasAbertos);
         setVal("closed-alert-count", alertasResolvidos);
+    });
+}
+
+
+/*
+
+
+request.json().then(function(json) {
+  console.log(json.foo);
+  console.log(json.bar);
+});
+*/
+
+function getAdress(lat, log, callback) {
+    var request = new Request("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + log + "&localityLanguage=pt");
+    fetch(request).then(function (response) {
+        return response.json();
+    }).then(function (text) {
+        //console.log(text);
+        callback(text);
     });
 }

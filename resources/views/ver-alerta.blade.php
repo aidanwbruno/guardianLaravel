@@ -27,6 +27,21 @@
         var db = getFireDB(firebase);
         //loadUsers(db);
         loadLocationsofUser(db, '{{request()->uid}}');
+        var lat = '{{request()->lat}}';
+        var log = '{{request()->log}}';
+    
+        getAdress(lat, log, (json) => {
+                setVal("alertLocation", json.locality + ", " + json.principalSubdivision);
+        });
+
+        loadDocument(db, "USUARIOS", '{{request()->uid}}', (userDoc) => {
+            if (userDoc.exists) {
+                var doc = userDoc.data();
+              setVal("userAlertCPF", doc.cpf); 
+              setVal("userAlertName", doc.name);  
+            }
+        });
+
     </script>    
 @endsection
 
@@ -44,7 +59,7 @@
                 <thead class=" text-primary">
                     <th>CPF</th>
                     <th>Nome</th>
-                    <th>Localização Inicial</th>
+                    <th>Última Localização</th>
                     <th>Data e Hora</th>
                     <th>Opções</th>
                 </thead>
@@ -52,10 +67,10 @@
                     <tr>
                         <td id="userAlertCPF">{{request()->id}}</td>
                         <td id="userAlertName">{{request()->name}}</td>
-                        <td>{{request()->location}}</td>
+                        <td id="alertLocation">{{request()->location}}</td>
                         <td>{{request()->dateTime}}</td>
                         <td>
-                            <a href="/editar/user/{{request()->uid}}">ATUALIZAR LOCALIZAÇÃO</a>
+                            <a onclick="alert('implementando funcionalidade')" href="#">ATUALIZAR LOCALIZAÇÃO</a>
                         </td>
                     </tr>
                 </tbody>
