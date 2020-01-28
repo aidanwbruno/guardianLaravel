@@ -26,29 +26,12 @@
     <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
           <div class="logo" style="text-align: center;">
         <a href="#">
-            <img width="70%" src="{{asset('img/app_logo.png')}}">
+            <img width="65%" src="{{asset('img/app_logo.png')}}">
         </a>
       </div>
       <div class="sidebar-wrapper">
         <ul class="nav">
-          <li class="nav-item active  ">
-            <a class="nav-link" href="{{url('/home')}}">
-              <i class="material-icons">dashboard</i>
-              <p>Home</p>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="{{url('/usuarios')}}">
-              <i class="material-icons">people</i>
-              <p>Usuários</p>
-            </a>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="{{url('/alertas')}}">
-              <i class="material-icons">notification_important</i>
-              <p>Alertas</p>
-            </a>
-          </li>
+         @yield('menu')
         </ul>
       </div>
     </div>

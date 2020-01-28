@@ -1,5 +1,25 @@
 @extends('layouts.template')
 
+@section('menu')
+<li class="nav-item active">
+  <a class="nav-link" href="{{url('/home')}}">
+    <i class="material-icons">dashboard</i>
+    <p>Home</p>
+  </a>
+</li>
+<li class="nav-item ">
+  <a class="nav-link" href="{{url('/usuarios')}}">
+    <i class="material-icons">people</i>
+    <p>Usuários</p>
+  </a>
+</li>
+<li class="nav-item ">
+  <a class="nav-link" href="{{url('/alertas')}}">
+    <i class="material-icons">notification_important</i>
+    <p>Alertas</p>
+  </a>
+</li>    
+@endsection
 
 @section('script')
     <script>

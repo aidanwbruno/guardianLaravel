@@ -24,7 +24,7 @@ Route::get('/usuarios', function () {
     return view('usuarios');
 });
 
-Route::get('/editar/user/{user_id}', function () {
+Route::get('/editar/user', function () {
     return view('editar-usuario');
 });
 
