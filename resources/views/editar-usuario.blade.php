@@ -26,6 +26,7 @@
        firebase.initializeApp(getFirebaseConfig());
        var db = getFireDB(firebase);
        loadUserById(db, '{{request()->user_id}}');
+
     </script>    
 @endsection
 
@@ -90,16 +91,17 @@
               <div class="row">
                 <div class="col-md-4">
                   <div class="form-group">
-                    <label class="bmd-label-floating">Cidade</label>
-                    <input type="text" id="user_cidade" class="form-control">
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-group">
                     <label class="bmd-label-floating">Bairro</label>
                     <input type="text" id="user_bairro" class="form-control">
                   </div>
                 </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label class="bmd-label-floating">Cidade</label>
+                    <input type="text" id="user_cidade" class="form-control">
+                  </div>
+                </div>
+      
                 <div class="col-md-1">
                   <div class="form-group">
                     <label class="bmd-label-floating">Estado</label>
@@ -116,44 +118,75 @@
 
               <hr/>
 
-              <div style="display: none" class="row">
-                  <div class="">
+              <div class="row">
+                <div class=col-md-8" style="margin-left: 16px">
                   <div class="form-group">
-                    <label class="bmd-label-floating">Possui Veículo?</label>
-                    <input type="checkbox" class="form-control">
+                    <label class="bmd-label-floating">Carros</label>
                   </div>
                 </div>
-                <div class="col-md-6">
+              </div>
+
+            
+              <table class="table">
+                <thead class=" text-primary">
+                  <th>Marca</th>
+                  <th>Modelo</th>
+                  <th>Placa</th>
+                  <th>Cor</th>
+                  <th>Opções</th>
+                </thead>
+                <tbody id="tblUserCars">
+                </tbody>
+              </table>
+
+
+              <hr/>
+              <div  style="display:none" id="edit_title" class="row">
+                <div class=col-md-8" style="margin-left: 16px">
+                  <div class="form-group">
+                    <label class="bmd-label-floating">Editar Carro</label>
+                  </div>
+                </div>
+              </div>
+    
+              <div  style="display:none" id="car_fields" class="row">
+                <div class="col-md-2">
                   <div class="form-group">
                     <label class="bmd-label-floating">Placa</label>
-                    <input type="text" class="form-control">
+                    <input type="text" id="user_placa" class="form-control">
                   </div>
                 </div>
-
 
                 <div class="col-md-4">
                   <div class="form-group">
                     <label class="bmd-label-floating">Marca</label>
-                    <input type="text" class="form-control">
+                    <input type="text" id="user_marca" class="form-control">
                   </div>
                 </div>
                 <div class="col-md-4">
                   <div class="form-group">
                     <label class="bmd-label-floating">Modelo</label>
-                    <input type="text" class="form-control">
+                    <input type="text" id="user_modelo" class="form-control">
                   </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-2">
                   <div class="form-group">
                     <label class="bmd-label-floating">Cor</label>
-                    <input type="text" class="form-control">
+                    <input type="text" id="user_cor" class="form-control">              
                   </div>
                 </div>
-
+                <div class="col-md-2">
+                  <div class="form-group">
+                    <button onclick="updateCar();" type="button" class="btn pull-left">Atualizar Carro</button>
+                  </div>
+                </div>
               </div>
+           
+
               <button onclick="updateUser('{{request()->user_id}}')" type="button" class="btn btn-primary pull-right">Atualizar Usuário</button>
               <div class="clearfix"></div>
             </form>
+
           </div>
         </div>
       </div>

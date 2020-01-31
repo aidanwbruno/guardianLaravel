@@ -26,3 +26,8 @@
     padding: 8px;
     min-width: 200px;
 }
+
+.link {
+    cursor: pointer;
+    color: blue;
+}

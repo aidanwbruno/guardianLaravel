@@ -126,6 +126,21 @@ function createUserRowTable(doc, id) {
 }
 
 
+
+function createCarRowTable(car) {
+    var placa = "" + car.placa + "";
+    return "<tr>"
+        + "<td>" + car.marca + "</td>"
+        + "<td>" + car.modelo + "</td>"
+        + "<td>" + car.cor + "</td>"
+        + "<td>" + car.placa + "</td>"
+        + "<td>"
+        + "  <a class='link' onClick=\"showCarfield(\'" + placa + "\');\">Editar</a> | "
+        + "  <a class='link' onClick=\"deleteCarItem(\'" + placa + "\');\">Excluir</a>"
+        + "</td></tr>";
+}
+
+
 function toJson(string) {
     return JSON.parse(string);
 }
@@ -159,6 +174,8 @@ function loadUsersHistory(db) {
 //==========================================================================================
 
 //======================== USERS ===========================================================
+var carros = null;
+var carroAtual = null;
 
 function loadUserById(db, userId) {
     loadDocument(db, "USUARIOS", userId, (userDoc) => {
@@ -176,8 +193,23 @@ function loadUserById(db, userId) {
             form.user_estado.value = user.estado;
             // motorista: form.user_motorista.value, // true or false
             form.user_rua.value = user.rua;
+            showUserCars(user.carros);
+
         }
     });
+}
+
+
+function showUserCars(list) {
+    var carTable = tag("tblUserCars");
+    var html = "";
+    carTable.innerHTML = html;
+    carros = Object.values(list);
+    carros.forEach((car) => {
+        console.log("Carros: " + car.marca);
+        html += createCarRowTable(car);
+    });
+    carTable.innerHTML = html;
 }
 
 function loadUsers(db) {
@@ -226,6 +258,68 @@ function loadLocationsofUser(db, userId) {
     });
 }
 
+function showCarfield(car) {
+    var carro = null;
+    carros.forEach((item) => {
+        if (item.placa == car) {
+            carro = item;
+            return;
+        }
+    });
+    if (carro != null) {
+        var form = document.forms[0];
+        form.user_marca.value = carro.marca;
+        form.user_modelo.value = carro.modelo;
+        form.user_cor.value = carro.cor;
+        form.user_placa.value = carro.placa;
+        carroAtual = carro;
+    }
+    tag("car_fields").style.display = "block";
+    tag("edit_title").style.display = "block";
+}
+
+function updateCar() {
+    var form = document.forms[0];
+    if (form.user_marca.value === undefined || form.user_marca.value === null || form.user_nome.value == '') {
+        alert("A marca do carro é obrigatória");
+        return false;
+    }
+    if (form.user_modelo.value === undefined || form.user_modelo.value === null || form.user_modelo.value == '') {
+        alert("O Modelo do carro é obrigatório");
+        return false;
+    }
+    if (form.user_cor.value === undefined || form.user_cor.value === null || form.user_cor.value == '') {
+        alert("A Cor do carro é obrigatório");
+        return false;
+    }
+    if (form.user_placa.value === undefined || form.user_placa.value === null || form.user_placa.value == '') {
+        alert("A Placa do carro é obrigatório");
+        return false;
+    }
+
+
+    carroAtual.marca = form.user_marca.value;
+    carroAtual.modelo = form.user_modelo.value;
+    carroAtual.cor = form.user_cor.value;
+    carroAtual.placa = form.user_placa.value;
+
+    carros.forEach((item, i) => {
+        if (item.placa == carroAtual.placa) {
+            carros[i] = carroAtual;
+            showUserCars(carros);
+            form.user_marca.value = ""; alert("Carro atualizado com sucesso!!");
+            form.user_modelo.value = "";
+            form.user_cor.value = "";
+            form.user_placa.value = "";
+            tag("car_fields").style.display = "none";
+            tag("edit_title").style.display = "none";
+            alert("Carro atualizado com sucesso!!");
+            return;
+        }
+    });
+
+}
+
 /*
 
 // Wait 5 seconds and then update the `abc-variable` field
@@ -252,6 +346,7 @@ function updateUser(userId) {
             numero: form.user_numero.value,
             email: form.user_email.value,
             estado: form.user_estado.value,
+            carros: carros,
             // motorista: form.user_motorista.value, // true or false
             rua: form.user_rua.value
         };
@@ -271,6 +366,18 @@ function updateUser(userId) {
             });
         }
     }
+}
+
+function startEditCar(car) { }
+
+function deleteCarItem(car) {
+    alert(carros.lenght);
+    carros.forEach((item) => {
+        if (item.placa == '' + car + '') {
+            carros.splice(carros.indexOf(item), 1);
+        }
+    });
+    showUserCars(carros);
 }
 
 
@@ -351,6 +458,10 @@ function createAlertRowTable(doc) {
     var status = "Ativo";
     var dateTime = milliToDate(alertData.createdAt).toLocaleString();
     var loc = toJson(alertData.ultimaLocalizacao);
+    var audio = "#";
+    if (alertData.audio != null && alertData.audio != undefined && alertData.audio != '') {
+        audio = alertData.audio;
+    }
     if (alertData.open == false) {
         status = "Resolvido";
     }
@@ -360,7 +471,7 @@ function createAlertRowTable(doc) {
         + "<td>" + dateTime + "</td>"
         + "<td>" + status + "</td>"
         + "<td>"
-        + "  <a href='/alert/" + doc.id + "?uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + loc.longitude + "&lat=" + loc.latitude + "'>Ver Alerta</a>"
+        + "  <a href='/alert/" + doc.id + "?uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + loc.longitude + "&lat=" + loc.latitude + "&audio=" + audio + "'>Ver Alerta</a>"
         + "</td></tr>";
 }
 
@@ -368,11 +479,13 @@ function createAlertRowTable(doc) {
 function loadAlerts(db) {
     var alertTable = tag("tblAlertas");
     var html = "";
+
     var alertasResolvidos = 0;
     var alertasAbertos = 0;
     loadCollection(db, "ALERTAS", (list) => {
         alertasAbertos = 0;
         alertasResolvidos = 0;
+        alertTable.innerHTML = "";
         list.forEach((doc) => {
             var alerta = doc.data();
             if (alerta.open == true) {
@@ -401,7 +514,7 @@ function loadAlerts(db) {
         });
         setVal("alert-count", alertasAbertos);
         setVal("closed-alert-count", alertasResolvidos);
-        alertTable.innerHTML += html;
+        alertTable.innerHTML = html;
     });
 }
 

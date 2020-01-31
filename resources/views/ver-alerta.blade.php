@@ -41,7 +41,10 @@
               setVal("userAlertName", doc.name);  
             }
         });
-
+       /* var storage = firebase.storage();
+        storage.ref().child('{{request()->audio}}').getDownloadURL().then(function(url) {
+          console.log(url);
+        });*/
     </script>    
 @endsection
 
@@ -61,6 +64,7 @@
                     <th>Nome</th>
                     <th>Última Localização</th>
                     <th>Data e Hora</th>
+                    <th>Audio</th>
                     <th>Opções</th>
                 </thead>
                 <tbody>
@@ -69,9 +73,8 @@
                         <td id="userAlertName">{{request()->name}}</td>
                         <td id="alertLocation">{{request()->location}}</td>
                         <td>{{request()->dateTime}}</td>
-                        <td>
-                            <a onclick="alert('implementando funcionalidade')" href="#">ATUALIZAR LOCALIZAÇÃO</a>
-                        </td>
+                        <td><a href="https://firebasestorage.googleapis.com/v0/b/guardians-b9dc4.appspot.com/o/{{request()->audio}}">audio</a></td>
+                        <td><a onclick="alert('implementando funcionalidade')" href="#">ATUALIZAR LOCALIZAÇÃO</a></td>
                     </tr>
                 </tbody>
             </table>

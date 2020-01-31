@@ -74,8 +74,9 @@
 
   </div>
  <!-- The core Firebase JS SDK is always required and must be listed first -->
-  <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/7.7.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-firestore.js"></script>
+  <!--<script src="https://www.gstatic.com/firebasejs/7.8.0/firebase-storage.js"></script> -->
   <script src="{{asset('js/fire.js')}}"></script>
   
   <!--<script src="{asset('js/material-dashboard.js')}}"></script>-->
