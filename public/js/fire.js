@@ -444,3 +444,21 @@ function getAdress(lat, log, callback) {
         callback(text);
     });
 }
+
+
+/*
+
+Para enviar uma notificação basta fazer um requisição POST para a url: https://fcm.googleapis.com/fcm/send passando um json no seguinte formato:
+
+{
+    "to": "TOKEN_DE_ACESSO",
+    "data": {
+      "notification": {
+       "title": "Oi!",
+       "body": "Eu sou uma notificação!",
+       "click_action": "http://127.0.0.1:8887",
+       "icon": "http://127.0.0.1:8887/icon.png"
+     }
+    }
+  }
+  */
