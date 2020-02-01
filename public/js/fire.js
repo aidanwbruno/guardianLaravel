@@ -575,3 +575,7 @@ Para enviar uma notificação basta fazer um requisição POST para a url: https
     }
   }
   */
+
+function showMenu() {
+    tag('menu').style.display = "block!important";
+}

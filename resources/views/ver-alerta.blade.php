@@ -45,6 +45,12 @@
         storage.ref().child('{{request()->audio}}').getDownloadURL().then(function(url) {
           console.log(url);
         });*/
+
+        var audio = '{{request()->audio}}';
+
+        function openAudio(){
+          window.open('https://firebasestorage.googleapis.com/v0/b/guardians-b9dc4.appspot.com/o/'+audio,'_blank');
+        }
     </script>    
 @endsection
 
@@ -73,7 +79,7 @@
                         <td id="userAlertName">{{request()->name}}</td>
                         <td id="alertLocation">{{request()->location}}</td>
                         <td>{{request()->dateTime}}</td>
-                        <td><a href="https://firebasestorage.googleapis.com/v0/b/guardians-b9dc4.appspot.com/o/{{request()->audio}}">audio</a></td>
+                        <td><a href="#" onclick="openAudio()">audio</a></td>
                         <td><a onclick="alert('implementando funcionalidade')" href="#">ATUALIZAR LOCALIZAÇÃO</a></td>
                     </tr>
                 </tbody>

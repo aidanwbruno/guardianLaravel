@@ -1,0 +1,105 @@
+.tim-typo {
+    padding-left: 25%;
+    margin-bottom: 40px;
+    position: relative;
+    width: 100%;
+}
+
+.tim-typo .tim-note {
+    bottom: 5px;
+    color: #c0c1c2;
+    display: block;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 15px;
+    left: 0;
+    margin-left: 20px;
+    position: absolute;
+    width: 260px;
+}
+
+/* offline-doc */
+
+.offline-doc .navbar.navbar-transparent {
+    padding-top: 25px;
+    border-bottom: none;
+}
+
+.offline-doc .navbar.navbar-transparent .navbar-minimize {
+    display: none;
+}
+
+.offline-doc .navbar.navbar-transparent .navbar-brand,
+.offline-doc .navbar.navbar-transparent .collapse .navbar-nav .nav-link {
+    color: #ffffff !important;
+}
+
+.offline-doc .footer {
+    z-index: 3 !important;
+}
+
+.offline-doc .page-header .container {
+    z-index: 3;
+}
+
+.offline-doc .page-header:after {
+    background-color: rgba(0, 0, 0, 0.5);
+    content: "";
+    display: block;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+}
+
+#map {
+    z-index: 2;
+    height: calc(100vh - 70px);
+    margin-top: 70px;
+}
+
+/*
+
+
+   <!--
+    <!-- Plugin for the momentJs  -->
+   <script src="{{asset('js/plugins/moment.min.js')}}"></script>
+   <!--  Plugin for Sweet Alert -->
+   <script src="{{asset('js/plugins/sweetalert2.js')}}"></script>
+   
+
+    <!-- Forms Validations Plugin -->
+   <script src="{{asset('js/plugins/jquery.validate.min.js')}}"></script>
+   <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
+   <script src="{{asset('js/plugins/jquery.bootstrap-wizard.js')}}"></script>
+   <!--  Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
+   <script src="{{asset('js/plugins/bootstrap-selectpicker.js')}}"></script>
+   <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
+   <script src="{{asset('js/plugins/bootstrap-datetimepicker.min.js')}}"></script>
+   <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  -->
+   <script src="{{asset('js/plugins/jquery.dataTables.min.js')}}"></script>
+   <!--  Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
+   <script src="{{asset('js/plugins/bootstrap-tagsinput.js')}}"></script>
+   <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
+   <script src="{{asset('js/plugins/jasny-bootstrap.min.js')}}"></script>
+   <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
+   <script src="{{asset('js/plugins/fullcalendar.min.js')}}"></script>
+   <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
+   <script src="{{asset('js/plugins/jquery-jvectormap.js')}}"></script>
+   <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+   <script src="{{asset('js/plugins/nouislider.min.js')}}"></script>
+   <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script> 
+   <!-- Library for adding dinamically elements -->
+   <script src="{{asset('js/plugins/arrive.min.js')}}"></script>
+   <!--  Google Maps Plugin    
+   <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>  -->
+   <!-- Chartist JS -->
+   <script src="{{asset('js/plugins/chartist.min.js')}}"></script>
+   <!--  Notifications Plugin    -->
+   <script src="{{asset('js/plugins/bootstrap-notify.js')}}"></script>
+    --->
+
+*/
