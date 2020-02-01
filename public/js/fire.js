@@ -131,7 +131,7 @@ function createUserRowTable(doc, id) {
     return " <tr>"
         + "<td>" + id + "</td>"
         + "<td>" + userData.name + "</td>"
-        + "<td id='loc_u_" + id + "'>" + userData.ultimaLocalizacao + "</td>"
+        + "<td id='loc_u_" + doc.id + "'>" + userData.ultimaLocalizacao + "</td>"
         + "<td>" + status + "</td>"
         + "<td>"
         + "  <a href='/editar/user?user_id=" + doc.id + "'>Editar</a> | "
@@ -240,7 +240,7 @@ function loadUsers(db) {
             var lat = toJson(data.ultimaLocalizacao).latitude;
             var log = toJson(data.ultimaLocalizacao).longitude;
             getAdress(lat, log, (json) => {
-                setValList("loc_u_" + id, json.locality + ", " + json.principalSubdivision);
+                setValList("loc_u_" + doc.id, json.locality + ", " + json.principalSubdivision);
             });
         });
         setVal("user-count", list.size);
