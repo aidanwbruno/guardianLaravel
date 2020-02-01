@@ -75,7 +75,7 @@
             <div class="card-icon">
                <i class="material-icons">error</i>
             </div>
-            <p class="card-category">Alertas Resolvidos</p>
+            <p class="card-category">Alertas Fechados</p>
             <h3 id="closed-alert-count" class="card-title">XX</h3>
           </div>
           <div class="card-footer"></div>

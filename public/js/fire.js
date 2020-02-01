@@ -87,7 +87,21 @@ function milliToDate(mille) {
 
     var date = new Date(mille);
     //console.log("Data em STR: " + date.toString());
-    return date;
+
+    var day = date.getDay();
+    var month = date.getMonth() + 1;
+
+    if (day < 10) {
+        day = "0" + date.getDay()
+    }
+
+
+    if (month < 10) {
+        month = "0" + month;
+    }
+
+    var pt = day + "-" + month + "-" + date.getFullYear() + ", " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+    return pt;
 }
 
 
@@ -95,8 +109,8 @@ function createUserHistoryRow(doc) {
     var userData = doc.data();
     return "<div class='flex table-content'>"
         + "<div>" + userData.name + "</div>"
-        + "<div>" + milliToDate(userData.createdAt).toLocaleDateString() + "</div>"
-        + "<div>" + milliToDate(userData.createdAt).toLocaleTimeString() + "</div>"
+        + "<div>" + milliToDate(userData.createdAt) + "</div>"
+        + "<div>" + milliToDate(userData.createdAt) + "</div>"
         + "<div>" + doc.id + "</div>"
         + "</div>";
 }
@@ -105,7 +119,7 @@ function createUserHistoryRow(doc) {
 function createUserHistoryRowTable(doc) {
     var userData = doc.data();
     return " <tr><td>" + userData.name + "</td>"
-        + "<td>" + milliToDate(userData.createdAt).toLocaleString() + "</td>"
+        + "<td>" + milliToDate(userData.createdAt) + "</td>"
         + "<td id='loc_h_" + doc.id + "'>" + userData.ultimaLocalizacao + "</td></tr>";
 }
 
@@ -246,7 +260,7 @@ function loadLocationsofUser(db, userId) {
             var dat = toJson(location.point).createdAt;
             var id = "al_" + doc.id;
             html += "<tr>"
-                + "<td>" + milliToDate(dat).toLocaleString() + "</td>"
+                + "<td>" + milliToDate(dat) + "</td>"
                 + "<td id='" + id + "'> carregando..</td>"
                 + "</tr>"
 
@@ -456,7 +470,7 @@ function validateForm(form) {
 function createAlertRowTable(doc) {
     var alertData = doc.data();
     var status = "Ativo";
-    var dateTime = milliToDate(alertData.createdAt).toLocaleString();
+    var dateTime = milliToDate(alertData.createdAt);
     var loc = toJson(alertData.ultimaLocalizacao);
     var audio = "#";
     if (alertData.audio != null && alertData.audio != undefined && alertData.audio != '') {
