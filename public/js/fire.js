@@ -156,6 +156,9 @@ function createCarRowTable(car) {
 
 
 function toJson(string) {
+    if (string == null || string == undefined || string == '') {
+        return null;
+    }
     return JSON.parse(string);
 }
 
@@ -172,11 +175,13 @@ function loadUsersHistory(db) {
             id++;
             html += createUserHistoryRowTable(doc);
             var data = doc.data();
-            var lat = toJson(data.ultimaLocalizacao).latitude;
-            var log = toJson(data.ultimaLocalizacao).longitude;
-            getAdress(lat, log, (json) => {
-                setValList("loc_h_" + doc.id, json.locality + ", " + json.principalSubdivision);
-            });
+            var lat = toJson(data.ultimaLocalizacao);
+            var log = toJson(data.ultimaLocalizacao);
+            if (lat != null && log != null) {
+                getAdress(lat.latitude, log.longitude, (json) => {
+                    setValList("loc_h_" + doc.id, json.locality + ", " + json.principalSubdivision);
+                });
+            }
         });
         setVal("user-count", list.size);
         userTable.innerHTML += html;
@@ -237,11 +242,15 @@ function loadUsers(db) {
             id++;
             var data = doc.data();
             html += createUserRowTable(doc, id);
-            var lat = toJson(data.ultimaLocalizacao).latitude;
-            var log = toJson(data.ultimaLocalizacao).longitude;
-            getAdress(lat, log, (json) => {
-                setValList("loc_u_" + doc.id, json.locality + ", " + json.principalSubdivision);
-            });
+
+            var lat = toJson(data.ultimaLocalizacao);
+            var log = toJson(data.ultimaLocalizacao);
+            if (lat != null && log != null) {
+                getAdress(lat.latitude, log.longitude, (json) => {
+                    setValList("loc_u_" + doc.id, json.locality + ", " + json.principalSubdivision);
+                });
+            }
+
         });
         setVal("user-count", list.size);
         userTable.innerHTML += html;
@@ -264,9 +273,12 @@ function loadLocationsofUser(db, userId) {
                 + "<td id='" + id + "'> carregando..</td>"
                 + "</tr>"
 
-            getAdress(lat, log, (json) => {
-                setValList(id, json.locality + ", " + json.principalSubdivision);
-            });
+            if (lat != null && log != null) {
+                getAdress(lat, log, (json) => {
+                    setValList(id, json.locality + ", " + json.principalSubdivision);
+                });
+            }
+
         });
         table.innerHTML = html;
     });
@@ -520,10 +532,12 @@ function loadAlerts(db) {
             });
 
             var data = doc.data();
-            var lat = toJson(alerta.ultimaLocalizacao).latitude;
-            var log = toJson(alerta.ultimaLocalizacao).longitude;
+            var lat = toJson(data.ultimaLocalizacao).latitude;
+            var log = toJson(data.ultimaLocalizacao).longitude;
             getAdress(lat, log, (json) => {
-                setValList("loc_a_" + doc.id, json.locality + ", " + json.principalSubdivision);
+                if (json != null) {
+                    setValList("loc_a_" + doc.id, json.locality + ", " + json.principalSubdivision);
+                }
             });
         });
         setVal("alert-count", alertasAbertos);
@@ -563,6 +577,10 @@ request.json().then(function(json) {
 */
 
 function getAdress(lat, log, callback) {
+    if (lat == null || lg == null) {
+        callback(null);
+        return;
+    }
     var request = new Request("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + log + "&localityLanguage=pt");
     fetch(request).then(function (response) {
         return response.json();
