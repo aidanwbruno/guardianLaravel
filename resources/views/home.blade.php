@@ -27,6 +27,7 @@
         var db = getFireDB(firebase);
         loadCountAlerts(db);
         loadUsersHistory(db);
+      
     </script>    
 @endsection
 

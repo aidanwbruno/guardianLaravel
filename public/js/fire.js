@@ -179,6 +179,7 @@ function loadUsersHistory(db) {
             var log = toJson(data.ultimaLocalizacao);
             if (lat != null && log != null) {
                 getAdress(lat.latitude, log.longitude, (json) => {
+                    //setValList("loc_h_" + doc.id, json['results'][1]['formatted_address'] + " ");
                     setValList("loc_h_" + doc.id, json.locality + ", " + json.principalSubdivision);
                 });
             }
@@ -247,6 +248,7 @@ function loadUsers(db) {
             var log = toJson(data.ultimaLocalizacao);
             if (lat != null && log != null) {
                 getAdress(lat.latitude, log.longitude, (json) => {
+                    //setValList("loc_u_" + doc.id, json['results'][1]['formatted_address'] + " ");
                     setValList("loc_u_" + doc.id, json.locality + ", " + json.principalSubdivision);
                 });
             }
@@ -275,6 +277,7 @@ function loadLocationsofUser(db, userId) {
 
             if (lat != null && log != null) {
                 getAdress(lat, log, (json) => {
+                    //setValList(id, json['results'][1]['formatted_address'] + " ");
                     setValList(id, json.locality + ", " + json.principalSubdivision);
                 });
             }
@@ -484,6 +487,18 @@ function createAlertRowTable(doc) {
     var status = "Ativo";
     var dateTime = milliToDate(alertData.createdAt);
     var loc = toJson(alertData.ultimaLocalizacao);
+    var lat = "";
+    var log = "";
+
+    if (loc != null && loc != undefined) {
+        if (loc.latitude != null) {
+            lat = loc.latitude;
+        }
+        if (loc.longitude != null) {
+            log = loc.longitude;
+        }
+    }
+
     var audio = "#";
     if (alertData.audio != null && alertData.audio != undefined && alertData.audio != '') {
         audio = alertData.audio;
@@ -497,7 +512,7 @@ function createAlertRowTable(doc) {
         + "<td>" + dateTime + "</td>"
         + "<td>" + status + "</td>"
         + "<td>"
-        + "  <a href='/alert/" + doc.id + "?uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + loc.longitude + "&lat=" + loc.latitude + "&audio=" + audio + "'>Ver Alerta</a>"
+        + "  <a href='/alert/" + doc.id + "?uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + log + "&lat=" + lat + "&audio=" + audio + "'>Ver Alerta</a>"
         + "</td></tr>";
 }
 
@@ -516,8 +531,6 @@ function loadAlerts(db) {
             var alerta = doc.data();
             if (alerta.open == true) {
                 alertasAbertos++;
-
-
             } else {
                 alertasResolvidos++;
             }
@@ -532,13 +545,26 @@ function loadAlerts(db) {
             });
 
             var data = doc.data();
-            var lat = toJson(data.ultimaLocalizacao).latitude;
-            var log = toJson(data.ultimaLocalizacao).longitude;
-            getAdress(lat, log, (json) => {
-                if (json != null) {
-                    setValList("loc_a_" + doc.id, json.locality + ", " + json.principalSubdivision);
+            var loc = toJson(data.ultimaLocalizacao);
+            var lat = null
+            var log = null;
+
+            if (loc != null && loc != undefined) {
+                if (loc.latitude != null) {
+                    lat = loc.latitude;
                 }
-            });
+                if (loc.longitude != null) {
+                    log = loc.longitude;
+                }
+                if (lat != null && log != null) {
+                    getAdress(lat, log, (json) => {
+                        if (json != null) {
+                            //setValList("loc_a_" + doc.id, json['results'][1]['formatted_address'] + " ");
+                            setValList("loc_a_" + doc.id, json.locality + ", " + json.principalSubdivision);
+                        }
+                    });
+                }
+            }
         });
         setVal("alert-count", alertasAbertos);
         setVal("closed-alert-count", alertasResolvidos);
@@ -568,8 +594,6 @@ function loadCountAlerts(db) {
 
 
 /*
-
-
 request.json().then(function(json) {
   console.log(json.foo);
   console.log(json.bar);
@@ -577,10 +601,11 @@ request.json().then(function(json) {
 */
 
 function getAdress(lat, log, callback) {
-    if (lat == null || lg == null) {
+    if (lat == null || log == null) {
         callback(null);
         return;
     }
+    // var request = new Request("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + log + "&key=AIzaSyDzhOcTXKLgf5UrnmORdJWBtVZ8DiukMdU");
     var request = new Request("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + log + "&localityLanguage=pt");
     fetch(request).then(function (response) {
         return response.json();
@@ -611,3 +636,95 @@ Para enviar uma notificação basta fazer um requisição POST para a url: https
 function showMenu() {
     tag('menu').style.display = "block!important";
 }
+
+
+// ['results'][1]['formatted_address]
+
+/*
+var jso = "{
+"plus_code": {
+    "compound_code": "P27Q+MC New York, NY, USA",
+        "global_code": "87G8P27Q+MC"
+},
+"results": [
+    {
+        "address_components": [
+            {
+                "long_name": "279",
+                "short_name": "279",
+                "types": ["street_number"]
+            },
+            {
+                "long_name": "Bedford Avenue",
+                "short_name": "Bedford Ave",
+                "types": ["route"]
+            },
+            {
+                "long_name": "Williamsburg",
+                "short_name": "Williamsburg",
+                "types": ["neighborhood", "political"]
+            },
+            {
+                "long_name": "Brooklyn",
+                "short_name": "Brooklyn",
+                "types": ["political", "sublocality", "sublocality_level_1"]
+            },
+            {
+                "long_name": "Kings County",
+                "short_name": "Kings County",
+                "types": ["administrative_area_level_2", "political"]
+            },
+            {
+                "long_name": "New York",
+                "short_name": "NY",
+                "types": ["administrative_area_level_1", "political"]
+            },
+            {
+                "long_name": "United States",
+                "short_name": "US",
+                "types": ["country", "political"]
+            },
+            {
+                "long_name": "11211",
+                "short_name": "11211",
+                "types": ["postal_code"]
+            }
+        ],
+        "formatted_address": "279 Bedford Ave, Brooklyn, NY 11211, USA",
+        "geometry": {
+            "location": {
+                "lat": 40.7142484,
+                "lng": -73.9614103
+            },
+            "location_type": "ROOFTOP",
+            "viewport": {
+                "northeast": {
+                    "lat": 40.71559738029149,
+                    "lng": -73.9600613197085
+                },
+                "southwest": {
+                    "lat": 40.71289941970849,
+                    "lng": -73.96275928029151
+                }
+            }
+        },
+        "place_id": "ChIJT2x8Q2BZwokRpBu2jUzX3dE",
+        "plus_code": {
+            "compound_code": "P27Q+MC Brooklyn, New York, United States",
+            "global_code": "87G8P27Q+MC"
+        },
+        "types": [
+            "bakery",
+            "cafe",
+            "establishment",
+            "food",
+            "point_of_interest",
+            "store"
+        ]
+    },
+
+],
+    "status": "OK"
+}";
+
+*/

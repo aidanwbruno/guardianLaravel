@@ -51,12 +51,27 @@
         function openAudio(){
           window.open('https://firebasestorage.googleapis.com/v0/b/guardians-b9dc4.appspot.com/o/'+audio,'_blank');
         }
+
+
+        function updateAlert(){
+            tag("loadingLoc").style.display = "block";
+            loadLocationsofUser(db, '{{request()->uid}}');
+            setInterval(function(){
+              tag("loadingLoc").style.display = "none";
+            }, 3000);
+        }
+
     </script>    
 @endsection
 
 @section('content')
 
-{{request()->mg}}
+<div style="display: none" id="loadingLoc" class="card">
+  <div class="card-body">
+    Atualizando Localização...
+  </div>
+</div>
+
     <div class="card">
         <div class="card-header card-header-primary">
         <h4 class="card-title ">Alerta</h4>
@@ -80,7 +95,7 @@
                         <td id="alertLocation">{{request()->location}}</td>
                         <td>{{request()->dateTime}}</td>
                         <td><a href="#" onclick="openAudio()">audio</a></td>
-                        <td><a onclick="alert('implementando funcionalidade')" href="#">ATUALIZAR LOCALIZAÇÃO</a></td>
+                        <td><a onclick="updateAlert()" href="#">ATUALIZAR LOCALIZAÇÃO</a></td>
                     </tr>
                 </tbody>
             </table>
