@@ -126,8 +126,16 @@ function createUserHistoryRowTable(doc) {
 function createUserRowTable(doc, id) {
     var userData = doc.data();
     var status = "Ativo";
-    var lat = toJson(userData.ultimaLocalizacao).latitude;
-    var log = toJson(userData.ultimaLocalizacao).longitude;
+    var loc = toJson(userData.ultimaLocalizacao);//.latitude;
+    var lat = "";
+    var log = "";
+    if (loc != null && loc != undefined) {
+        if (lat != null && log != null) {
+            lat = loc.latitude;
+            log = loc.longitude;
+        }
+    }
+
     return " <tr>"
         + "<td>" + id + "</td>"
         + "<td>" + userData.name + "</td>"
@@ -179,8 +187,8 @@ function loadUsersHistory(db) {
             var log = toJson(data.ultimaLocalizacao);
             if (lat != null && log != null) {
                 getAdress(lat.latitude, log.longitude, (json) => {
-                    //setValList("loc_h_" + doc.id, json['results'][1]['formatted_address'] + " ");
-                    setValList("loc_h_" + doc.id, json.locality + ", " + json.principalSubdivision);
+                    setValList("loc_h_" + doc.id, json['results'][1]['formatted_address'] + " ");
+                    // setValList("loc_h_" + doc.id, json.locality + ", " + json.principalSubdivision);
                 });
             }
         });
@@ -248,8 +256,8 @@ function loadUsers(db) {
             var log = toJson(data.ultimaLocalizacao);
             if (lat != null && log != null) {
                 getAdress(lat.latitude, log.longitude, (json) => {
-                    //setValList("loc_u_" + doc.id, json['results'][1]['formatted_address'] + " ");
-                    setValList("loc_u_" + doc.id, json.locality + ", " + json.principalSubdivision);
+                    setValList("loc_u_" + doc.id, json['results'][1]['formatted_address'] + " ");
+                    //setValList("loc_u_" + doc.id, json.locality + ", " + json.principalSubdivision);
                 });
             }
 
@@ -277,8 +285,8 @@ function loadLocationsofUser(db, userId) {
 
             if (lat != null && log != null) {
                 getAdress(lat, log, (json) => {
-                    //setValList(id, json['results'][1]['formatted_address'] + " ");
-                    setValList(id, json.locality + ", " + json.principalSubdivision);
+                    setValList(id, json['results'][1]['formatted_address'] + " ");
+                    //setValList(id, json.locality + ", " + json.principalSubdivision);
                 });
             }
 
@@ -559,8 +567,8 @@ function loadAlerts(db) {
                 if (lat != null && log != null) {
                     getAdress(lat, log, (json) => {
                         if (json != null) {
-                            //setValList("loc_a_" + doc.id, json['results'][1]['formatted_address'] + " ");
-                            setValList("loc_a_" + doc.id, json.locality + ", " + json.principalSubdivision);
+                            setValList("loc_a_" + doc.id, json['results'][1]['formatted_address'] + " ");
+                            //setValList("loc_a_" + doc.id, json.locality + ", " + json.principalSubdivision);
                         }
                     });
                 }
@@ -606,7 +614,9 @@ function getAdress(lat, log, callback) {
         return;
     }
     // var request = new Request("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + log + "&key=AIzaSyDzhOcTXKLgf5UrnmORdJWBtVZ8DiukMdU");
-    var request = new Request("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + log + "&localityLanguage=pt");
+    var request = new Request("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + log + "&key=AIzaSyCX9KQTKMsnd7OPLGcjOAfVPdTA2DzYMo0");
+    //https://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&key=AIzaSyCX9KQTKMsnd7OPLGcjOAfVPdTA2DzYMo0
+    //var request = new Request("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=" + lat + "&longitude=" + log + "&localityLanguage=pt");
     fetch(request).then(function (response) {
         return response.json();
     }).then(function (text) {
