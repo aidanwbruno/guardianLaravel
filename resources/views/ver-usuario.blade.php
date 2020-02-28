@@ -33,6 +33,21 @@
         getAdress(lat, log, (json) => {
                 setValList("my_last_location", json.locality + ", " + json.principalSubdivision);
         });
+
+
+
+        function disebleUser(docId, alert, callback) {
+        alert.open = false;
+        db.collection("USUARIOS").doc(docId).update(alert).then(function (docRef) {
+            //console.log("Document written with ID: ", docRef.data);
+            //addDocToTable(docRef)
+            //alert("Alerta Resolvido");
+            callback(true);
+        }).catch(function (error) {
+            callback(false);
+            console.error("Error adding document: ", error);
+        });
+      }
     </script>    
 @endsection
 
@@ -61,7 +76,8 @@
                     <td id="my_last_location">{{request()->location}}</td>
                     <td>{{request()->status}}</td>
                     <td>
-                        <a href="/editar/user/{{request()->uid}}">Editar</a>
+                        <a href="/editar/user/{{request()->uid}}">Editar</a> | 
+                
                     </td>
                 </tr>
             </tbody>

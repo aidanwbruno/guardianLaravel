@@ -29,5 +29,5 @@
 
 .link {
     cursor: pointer;
-    color: blue;
+    color: rgb(0, 153, 255) !important;
 }

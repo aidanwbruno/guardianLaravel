@@ -27,6 +27,47 @@
         firebase.initializeApp(getFirebaseConfig());
         var db = getFireDB(firebase);
         loadUsers(db);
+        setTimeout(function()
+{
+ sortTable(0,'tblUsers');
+}, 2000);
+
+
+
+function closeUser(id) {
+    loadDocument(db, "USUARIOS", id, (userDoc) => {
+        if (userDoc.exists) {
+            var doc = userDoc.data();
+            swal({
+                title: "Desativar Usuário",
+                text: "Deseja desativar esse usuário?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+                doc.ativo = false;
+                db.collection("USUARIOS").doc(id).update(doc).then(function (docRef) {
+                    if (willDelete) {
+                        swal("Usuário desativado com Sucesso!", {
+                            icon: "success",
+                        });
+                        setVal("st_u_" + id + "", 'false');
+                        setTimeout(function()
+{
+ sortTable(0,'tblUsers');
+}, 2000);
+                    } else {
+                        swal("Erro ao Desativado o Usuário!");
+                    }
+                }).catch(function (error) {
+                    callback(false);
+                    console.error("Error adding document: ", error);
+                });
+            });
+        }
+    });
+}
+
     </script>    
 @endsection
 
@@ -40,8 +81,7 @@
       <div class="table-responsive">
         <table class="table">
           <thead class=" text-primary">
-            <th>ID</th>
-            <th>Nome</th>
+            <th onclick="sortTable(1, 'tblUsers')">Nome</th>
             <th>Última Localização </th>
             <th>Status</th>
             <th>Opções</th>

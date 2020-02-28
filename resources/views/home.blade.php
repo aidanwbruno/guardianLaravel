@@ -27,7 +27,13 @@
         var db = getFireDB(firebase);
         loadCountAlerts(db);
         loadUsersHistory(db);
-      
+        setTimeout(function()
+{
+ sortTable(0,'tblhistory');
+ alert(count);
+}, 2000);
+
+
     </script>    
 @endsection
 
@@ -94,7 +100,7 @@
           <div class="card-body table-responsive">
             <table class="table table-hover">
               <thead class="text-warning">
-                <th>Usuário</th>
+                <th id="update" style="cursor:pointer" onclick="sortTable(0, 'tblhistory')">Usuário</th>
                 <th>Data / Hora</th>
                 <th>Última Localização</th>
               </thead>

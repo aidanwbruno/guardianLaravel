@@ -137,13 +137,13 @@ function createUserRowTable(doc, id) {
     }
 
     return " <tr>"
-        + "<td>" + id + "</td>"
         + "<td>" + userData.name + "</td>"
         + "<td id='loc_u_" + doc.id + "'>" + userData.ultimaLocalizacao + "</td>"
-        + "<td>" + status + "</td>"
+        + "<td id='st_u_" + doc.id + "'>" + userData.ativo + "</td>"
         + "<td>"
         + "  <a href='/editar/user?user_id=" + doc.id + "'>Editar</a> | "
-        + "  <a href='/user/" + doc.id + "?id=" + id + "&name=" + userData.name + "&lat=" + lat + "&log=" + log + "&status=" + status + "&uid=" + doc.id + "'>Ver Usúario</a>"
+        + "  <a href='/user/" + doc.id + "?id=" + id + "&name=" + userData.name + "&lat=" + lat + "&log=" + log + "&status=" + status + "&uid=" + doc.id + "'>Ver Usúario</a> | "
+        + "  <a class='link' onClick=\"closeUser(\'" + doc.id + "\');\">Desativar</a>"
         + "</td></tr>";
 }
 
@@ -194,6 +194,7 @@ function loadUsersHistory(db) {
         });
         setVal("user-count", list.size);
         userTable.innerHTML += html;
+
         //refresh();
     });
 }
@@ -344,7 +345,7 @@ function updateCar() {
         if (item.placa == carroAtual.placa) {
             carros[i] = carroAtual;
             showUserCars(carros);
-            form.user_marca.value = ""; alert("Carro atualizado com sucesso!!");
+            form.user_marca.value = "";
             form.user_modelo.value = "";
             form.user_cor.value = "";
             form.user_placa.value = "";
@@ -404,6 +405,8 @@ function updateUser(userId) {
         }
     }
 }
+
+
 
 function startEditCar(car) { }
 
@@ -485,10 +488,27 @@ function validateForm(form) {
 
 
 
+
+
+
+
 //==========================================================================================
 
 //======================== ALERTS ===========================================================
 
+
+function resolveAlert(docId, alert, callback) {
+    alert.open = false;
+    db.collection("ALERTAS").doc(docId).update(alert).then(function (docRef) {
+        //console.log("Document written with ID: ", docRef.data);
+        //addDocToTable(docRef)
+        //alert("Alerta Resolvido");
+        callback(true);
+    }).catch(function (error) {
+        callback(false);
+        console.error("Error adding document: ", error);
+    });
+}
 
 function createAlertRowTable(doc) {
     var alertData = doc.data();
@@ -518,9 +538,10 @@ function createAlertRowTable(doc) {
         + "<td id='a_u" + alertData.usuarioKey + "'>carregando...</td>"
         + "<td id='loc_a_" + doc.id + "'>" + alertData.ultimaLocalizacao + "</td>"
         + "<td>" + dateTime + "</td>"
-        + "<td>" + status + "</td>"
+        + "<td id='st_a_" + doc.id + "'>" + status + "</td>"
         + "<td>"
-        + "  <a href='/alert/" + doc.id + "?uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + log + "&lat=" + lat + "&audio=" + audio + "'>Ver Alerta</a>"
+        + "  <a href='/alert/" + doc.id + "?aid=" + doc.id + "&uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + log + "&lat=" + lat + "&audio=" + audio + "'>Ver Alerta</a> | "
+        + "  <a href='#' onClick=\"closeAlert(\'" + doc.id.toString() + "\')\">Resolver</a>"
         + "</td></tr>";
 }
 
@@ -580,6 +601,7 @@ function loadAlerts(db) {
     });
 }
 
+var count = 0;
 
 function loadCountAlerts(db) {
     var alertasResolvidos = 0;
@@ -587,14 +609,24 @@ function loadCountAlerts(db) {
     loadCollection(db, "ALERTAS", (list) => {
         alertasAbertos = 0;
         alertasResolvidos = 0;
+        var tempCont = 0
         list.forEach((doc) => {
             var alerta = doc.data();
+            console.log("doc" + alerta.createdAt);
             if (alerta.open == true) {
                 alertasAbertos++;
             } else {
                 alertasResolvidos++;
             }
+            tempCont++;
         });
+
+        if (tempCont > count && count > 0) {
+            swal("Novo Alerta!", {
+                icon: "success",
+            });
+        }
+        count = tempCont;
         setVal("alert-count", alertasAbertos);
         setVal("closed-alert-count", alertasResolvidos);
     });
@@ -626,10 +658,70 @@ function getAdress(lat, log, callback) {
 }
 
 
+
+function sortTable(n, tableName) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById(tableName);
+    switching = true;
+    // Set the sorting direction to ascending:
+    dir = "asc";
+    /* Make a loop that will continue until
+    no switching has been done: */
+    while (switching) {
+        // Start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /* Loop through all table rows (except the
+        first, which contains table headers): */
+        for (i = 0; i < (rows.length - 1); i++) {
+            // Start by saying there should be no switching:
+            shouldSwitch = false;
+            /* Get the two elements you want to compare,
+            one from current row and one from the next: */
+            x = rows[i].getElementsByTagName("TD")[n];
+            y = rows[i + 1].getElementsByTagName("TD")[n];
+            /* Check if the two rows should switch place,
+            based on the direction, asc or desc: */
+            if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    // If so, mark as a switch and break the loop:
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        if (shouldSwitch) {
+            /* If a switch has been marked, make the switch
+            and mark that a switch has been done: */
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            // Each time a switch is done, increase this count by 1:
+            switchcount++;
+        } else {
+            /* If no switching has been done AND the direction is "asc",
+            set the direction to "desc" and run the while loop again. */
+            if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+            }
+        }
+    }
+}
+
+
+
+
+
 /*
-
+ 
 Para enviar uma notificação basta fazer um requisição POST para a url: https://fcm.googleapis.com/fcm/send passando um json no seguinte formato:
-
+ 
 {
     "to": "TOKEN_DE_ACESSO",
     "data": {

@@ -41,6 +41,9 @@
               setVal("userAlertName", doc.name);  
             }
         });
+
+       
+        
        /* var storage = firebase.storage();
         storage.ref().child('{{request()->audio}}').getDownloadURL().then(function(url) {
           console.log(url);
@@ -54,12 +57,15 @@
 
 
         function updateAlert(){
+          closeAlert(null);
             tag("loadingLoc").style.display = "block";
             loadLocationsofUser(db, '{{request()->uid}}');
             setInterval(function(){
               tag("loadingLoc").style.display = "none";
             }, 3000);
         }
+
+
 
     </script>    
 @endsection
@@ -95,7 +101,7 @@
                         <td id="alertLocation">{{request()->location}}</td>
                         <td>{{request()->dateTime}}</td>
                         <td><a href="#" onclick="openAudio()">audio</a></td>
-                        <td><a onclick="updateAlert()" href="#">ATUALIZAR LOCALIZAÇÃO</a></td>
+                        <td><a onclick="closeAlert()" href="#">ATUALIZAR LOCALIZAÇÃO</a></td>
                     </tr>
                 </tbody>
             </table>
