@@ -43,7 +43,7 @@
         });
 
        
-        
+      
        /* var storage = firebase.storage();
         storage.ref().child('{{request()->audio}}').getDownloadURL().then(function(url) {
           console.log(url);
@@ -55,17 +55,21 @@
           window.open('https://firebasestorage.googleapis.com/v0/b/guardians-b9dc4.appspot.com/o/'+audio,'_blank');
         }
 
-
         function updateAlert(){
-         // closeAlert(null);
+          var open = '{{request()->open}}';
+          if(open == true || open == 'true'){
             tag("loadingLoc").style.display = "block";
             loadLocationsofUser(db, '{{request()->uid}}');
             setInterval(function(){
               tag("loadingLoc").style.display = "none";
             }, 3000);
+          }else{
+            swal({
+                title: " Alerta não está mais ativo",
+                icon: "warning"
+            });
+          }
         }
-
-
 
     </script>    
 @endsection

@@ -550,7 +550,7 @@ function createAlertRowTable(doc) {
         + "<td>" + dateTime + "</td>"
         + "<td id='st_a_" + doc.id + "'>" + status + "</td>"
         + "<td>"
-        + "  <a href='/alert/" + doc.id + "?aid=" + doc.id + "&uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + log + "&lat=" + lat + "&audio=" + audio + "'>Ver Alerta</a>"
+        + "  <a href='/alert/" + doc.id + "?aid=" + doc.id + "&uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + log + "&lat=" + lat + "&audio=" + audio + "&open=" + alertData.open + "'>Ver Alerta</a>"
         + resolv
         + "</td></tr>";
 }

@@ -30,7 +30,7 @@
         setTimeout(function()
 {
  sortTable(0,'tblhistory');
- alert(count);
+ //alert(count);
 }, 2000);
 
 
