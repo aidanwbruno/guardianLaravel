@@ -23,11 +23,13 @@
 
 @section('script')
     <script>
-        firebase.initializeApp(getFirebaseConfig());
-        var db = getFireDB(firebase);
-        loadAlerts(db);
+    
+firebase.initializeApp(getFirebaseConfig());
+var db = getFireDB(firebase);
+loadAlerts(db);
 
-        function closeAlert(id) {
+
+function closeAlert(id) {
     loadDocument(db, "ALERTAS", id, (userDoc) => {
         if (userDoc.exists) {
             var doc = userDoc.data();
@@ -38,22 +40,32 @@
                 buttons: true,
                 dangerMode: true,
             }).then((willDelete) => {
-                resolveAlert(id, doc, (ok) => {
-                    if (ok) {
-                        if (willDelete) {
-                            swal("Alerta Finalizado com Sucesso!", {
-                                icon: "success",
+                if (willDelete) {
+                    swal("Alguma Observação", {
+                        content: "input",
+                    })
+                        .then((value) => {
+                            doc.obs = value;
+                            resolveAlert(id, doc, (ok) => {
+                                if (ok) {
+                                    if (willDelete) {
+                                        swal("Alerta Finalizado com Sucesso!", {
+                                            icon: "success",
+                                        });
+                                        setVal("st_a_" + id + "", "Resolvido");
+                                        setTimeout(function () {
+                                            refresh();
+                                            sortTable(0, 'tblAlertas');
+                                        }, 2000);
+                                    } else {
+                                        //swal("Erro ao finalizar o Alerta!");
+                                    }
+                                }
                             });
-                            setVal("st_a_"+id+"", "Resolvido");
-                            setTimeout(function()
-{
- sortTable(0,'tblAlertas');
-}, 2000);
-                        } else {
-                            swal("Erro ao finalizar o Alerta!");
-                        }
-                    }
-                });
+                        });
+
+                }
+
 
             });
         }
@@ -61,10 +73,11 @@
 
 }
 
-setTimeout(function()
-{
- sortTable(0,'tblAlertas');
+setTimeout(function () {
+    sortTable(0, 'tblAlertas');
 }, 2000);
+
+
 
     </script>    
 @endsection

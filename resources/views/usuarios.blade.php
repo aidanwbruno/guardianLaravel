@@ -34,30 +34,43 @@
 
 
 
-function closeUser(id) {
+function closeUser(enable, id) {
+
+  var title = "Ativar";
+
+  if(enable){
+    title = "Desativar"
+  }
+
     loadDocument(db, "USUARIOS", id, (userDoc) => {
         if (userDoc.exists) {
             var doc = userDoc.data();
             swal({
-                title: "Desativar Usuário",
-                text: "Deseja desativar esse usuário?",
+                title: title+" Usuário",
+                text: "Deseja "+title+" esse usuário?",
                 icon: "warning",
                 buttons: true,
                 dangerMode: true,
             }).then((willDelete) => {
-                doc.ativo = false;
+                if(enable == true || enable == 'true'){
+                  doc.ativo = false;
+                }else{
+                  doc.ativo = true;
+                }
+        
                 db.collection("USUARIOS").doc(id).update(doc).then(function (docRef) {
                     if (willDelete) {
-                        swal("Usuário desativado com Sucesso!", {
+                        swal("Usuário "+title+" com Sucesso!", {
                             icon: "success",
                         });
-                        setVal("st_u_" + id + "", 'false');
+                        setVal("st_u_" + id + "", ""+doc.ativo+"");
                         setTimeout(function()
 {
+ // refresh();
  sortTable(0,'tblUsers');
 }, 2000);
                     } else {
-                        swal("Erro ao Desativado o Usuário!");
+                        //swal("Erro ao "+title+" o Usuário!");
                     }
                 }).catch(function (error) {
                     callback(false);

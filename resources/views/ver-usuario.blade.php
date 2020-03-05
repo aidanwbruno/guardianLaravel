@@ -34,20 +34,6 @@
                 setValList("my_last_location", json.locality + ", " + json.principalSubdivision);
         });
 
-
-
-        function disebleUser(docId, alert, callback) {
-        alert.open = false;
-        db.collection("USUARIOS").doc(docId).update(alert).then(function (docRef) {
-            //console.log("Document written with ID: ", docRef.data);
-            //addDocToTable(docRef)
-            //alert("Alerta Resolvido");
-            callback(true);
-        }).catch(function (error) {
-            callback(false);
-            console.error("Error adding document: ", error);
-        });
-      }
     </script>    
 @endsection
 

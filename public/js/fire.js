@@ -129,6 +129,14 @@ function createUserRowTable(doc, id) {
     var loc = toJson(userData.ultimaLocalizacao);//.latitude;
     var lat = "";
     var log = "";
+
+    var enable = userData.ativo;
+
+    var ativoText = "Ativar";
+    if (enable) {
+        ativoText = "Desativar";
+    }
+
     if (loc != null && loc != undefined) {
         if (lat != null && log != null) {
             lat = loc.latitude;
@@ -143,7 +151,7 @@ function createUserRowTable(doc, id) {
         + "<td>"
         + "  <a href='/editar/user?user_id=" + doc.id + "'>Editar</a> | "
         + "  <a href='/user/" + doc.id + "?id=" + id + "&name=" + userData.name + "&lat=" + lat + "&log=" + log + "&status=" + status + "&uid=" + doc.id + "'>Ver Usúario</a> | "
-        + "  <a class='link' onClick=\"closeUser(\'" + doc.id + "\');\">Desativar</a>"
+        + "  <a class='link' onClick=\"closeUser(" + enable + ",\'" + doc.id + "\');\">" + ativoText + "</a>"
         + "</td></tr>";
 }
 
@@ -487,11 +495,6 @@ function validateForm(form) {
 
 
 
-
-
-
-
-
 //==========================================================================================
 
 //======================== ALERTS ===========================================================
@@ -531,17 +534,24 @@ function createAlertRowTable(doc) {
     if (alertData.audio != null && alertData.audio != undefined && alertData.audio != '') {
         audio = alertData.audio;
     }
+
+    var resolv = "";
+
     if (alertData.open == false) {
         status = "Resolvido";
+    } else {
+        resolv = "| <a href='#' onClick=\"closeAlert(\'" + doc.id.toString() + "\')\">Resolver</a>";
     }
+
+
     return " <tr>"
         + "<td id='a_u" + alertData.usuarioKey + "'>carregando...</td>"
         + "<td id='loc_a_" + doc.id + "'>" + alertData.ultimaLocalizacao + "</td>"
         + "<td>" + dateTime + "</td>"
         + "<td id='st_a_" + doc.id + "'>" + status + "</td>"
         + "<td>"
-        + "  <a href='/alert/" + doc.id + "?aid=" + doc.id + "&uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + log + "&lat=" + lat + "&audio=" + audio + "'>Ver Alerta</a> | "
-        + "  <a href='#' onClick=\"closeAlert(\'" + doc.id.toString() + "\')\">Resolver</a>"
+        + "  <a href='/alert/" + doc.id + "?aid=" + doc.id + "&uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + log + "&lat=" + lat + "&audio=" + audio + "'>Ver Alerta</a>"
+        + resolv
         + "</td></tr>";
 }
 
