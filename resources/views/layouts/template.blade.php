@@ -301,6 +301,7 @@
        md.initDashboardPageCharts();
  
      });
+     
    </script>
 
     <!--   Core JS Files   -->

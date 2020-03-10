@@ -31,7 +31,7 @@
         var log = '{{request()->log}}';
     
         getAdress(lat, log, (json) => {
-                setValList("my_last_location", json.locality + ", " + json.principalSubdivision);
+            setValList("my_last_location", json['results'][1]['formatted_address'] + " ");
         });
 
     </script>    
@@ -62,8 +62,7 @@
                     <td id="my_last_location">{{request()->location}}</td>
                     <td>{{request()->status}}</td>
                     <td>
-                        <a href="/editar/user/{{request()->uid}}">Editar</a> | 
-                
+                        <a href="/editar/user?user_id={{request()->uid}}">Editar</a>
                     </td>
                 </tr>
             </tbody>

@@ -31,7 +31,8 @@
         var log = '{{request()->log}}';
     
         getAdress(lat, log, (json) => {
-                setVal("alertLocation", json.locality + ", " + json.principalSubdivision);
+               // setVal("alertLocation", json.locality + ", " + json.principalSubdivision);
+                setValList("alertLocation", json['results'][1]['formatted_address'] + " ");
         });
 
         loadDocument(db, "USUARIOS", '{{request()->uid}}', (userDoc) => {
@@ -96,6 +97,7 @@
                     <th>Última Localização</th>
                     <th>Data e Hora</th>
                     <th>Audio</th>
+                    <th>Observação</th>
                     <th>Opções</th>
                 </thead>
                 <tbody>
@@ -105,6 +107,7 @@
                         <td id="alertLocation">{{request()->location}}</td>
                         <td>{{request()->dateTime}}</td>
                         <td><a href="#" onclick="openAudio()">audio</a></td>
+                        <td id="alertObs">{{request()->obs}}</a></td>
                         <td><a onclick="updateAlert()" href="#">ATUALIZAR LOCALIZAÇÃO</a></td>
                     </tr>
                 </tbody>

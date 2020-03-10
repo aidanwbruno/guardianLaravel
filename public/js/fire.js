@@ -28,10 +28,16 @@ function getFireDB(firebase) {
 }
 
 
-function loadCollection(db, name, callback) {
-    db.collection(name).onSnapshot(function (querySnapshot) {
-        callback(querySnapshot);
-    });
+function loadCollection(db, name, live, callback) {
+    if (live) {
+        db.collection(name).onSnapshot(function (querySnapshot) {
+            callback(querySnapshot);
+        });
+    } else {
+        db.collection(name).get().then(function (querySnapshot) {
+            callback(querySnapshot);
+        });
+    }
 }
 
 function loadCollectionbyField(db, callection, field, value, callback) {
@@ -120,7 +126,11 @@ function createUserHistoryRowTable(doc) {
     var userData = doc.data();
     return " <tr><td>" + userData.name + "</td>"
         + "<td>" + milliToDate(userData.createdAt) + "</td>"
-        + "<td id='loc_h_" + doc.id + "'>" + userData.ultimaLocalizacao + "</td></tr>";
+        + "<td id='loc_h_" + hashId(doc.id) + "'>" + userData.ultimaLocalizacao + "</td></tr>";
+}
+
+function hashId(s) {
+    return s.split("").reduce(function (a, b) { a = ((a << 5) - a) + b.charCodeAt(0); return a & a }, 0);
 }
 
 function createUserRowTable(doc, id) {
@@ -129,6 +139,8 @@ function createUserRowTable(doc, id) {
     var loc = toJson(userData.ultimaLocalizacao);//.latitude;
     var lat = "";
     var log = "";
+
+    var uui = hashId(doc.id);
 
     var enable = userData.ativo;
 
@@ -146,11 +158,11 @@ function createUserRowTable(doc, id) {
 
     return " <tr>"
         + "<td>" + userData.name + "</td>"
-        + "<td id='loc_u_" + doc.id + "'>" + userData.ultimaLocalizacao + "</td>"
-        + "<td id='st_u_" + doc.id + "'>" + userData.ativo + "</td>"
+        + "<td id='loc_u_" + uui + "'>" + userData.ultimaLocalizacao + "</td>"
+        + "<td id='st_u_" + uui + "'>" + userData.ativo + "</td>"
         + "<td>"
         + "  <a href='/editar/user?user_id=" + doc.id + "'>Editar</a> | "
-        + "  <a href='/user/" + doc.id + "?id=" + id + "&name=" + userData.name + "&lat=" + lat + "&log=" + log + "&status=" + status + "&uid=" + doc.id + "'>Ver Usúario</a> | "
+        + "  <a href='/user/" + uui + "?id=" + doc.id + "&name=" + userData.name + "&lat=" + lat + "&log=" + log + "&status=" + status + "&uid=" + doc.id + "'>Ver Usúario</a> | "
         + "  <a class='link' onClick=\"closeUser(" + enable + ",\'" + doc.id + "\');\">" + ativoText + "</a>"
         + "</td></tr>";
 }
@@ -182,7 +194,7 @@ function toJson(string) {
 
 // historico
 function loadUsersHistory(db) {
-    loadCollection(db, "USUARIOS", (list) => {
+    loadCollection(db, "USUARIOS", true, (list) => {
         var userTable = tag("tblhistory");
         var html = "";
         var id = 0;
@@ -195,7 +207,7 @@ function loadUsersHistory(db) {
             var log = toJson(data.ultimaLocalizacao);
             if (lat != null && log != null) {
                 getAdress(lat.latitude, log.longitude, (json) => {
-                    setValList("loc_h_" + doc.id, json['results'][1]['formatted_address'] + " ");
+                    setValList("loc_h_" + hashId(doc.id), json['results'][1]['formatted_address'] + " ");
                     // setValList("loc_h_" + doc.id, json.locality + ", " + json.principalSubdivision);
                 });
             }
@@ -250,7 +262,7 @@ function showUserCars(list) {
 }
 
 function loadUsers(db) {
-    loadCollection(db, "USUARIOS", (list) => {
+    loadCollection(db, "USUARIOS", true, (list) => {
         var userTable = tag("tblUsers");
         userTable.innerHTML = "";
         var html = "";
@@ -265,7 +277,7 @@ function loadUsers(db) {
             var log = toJson(data.ultimaLocalizacao);
             if (lat != null && log != null) {
                 getAdress(lat.latitude, log.longitude, (json) => {
-                    setValList("loc_u_" + doc.id, json['results'][1]['formatted_address'] + " ");
+                    setValList("loc_u_" + hashId(doc.id), json['results'][1]['formatted_address'] + " ");
                     //setValList("loc_u_" + doc.id, json.locality + ", " + json.principalSubdivision);
                 });
             }
@@ -286,7 +298,7 @@ function loadLocationsofUser(db, userId) {
             var lat = toJson(location.point).latitude;
             var log = toJson(location.point).longitude;
             var dat = toJson(location.point).createdAt;
-            var id = "al_" + doc.id;
+            var id = "al_" + hashId(doc.id);
             html += "<tr>"
                 + "<td>" + milliToDate(dat) + "</td>"
                 + "<td id='" + id + "'> carregando..</td>"
@@ -545,12 +557,13 @@ function createAlertRowTable(doc) {
 
 
     return " <tr>"
-        + "<td id='a_u" + alertData.usuarioKey + "'>carregando...</td>"
+        + "<td id='a_u" + hashId(alertData.usuarioKey) + "'>carregando...</td>"
         + "<td id='loc_a_" + doc.id + "'>" + alertData.ultimaLocalizacao + "</td>"
         + "<td>" + dateTime + "</td>"
         + "<td id='st_a_" + doc.id + "'>" + status + "</td>"
+        + "<td>" + alertData.obs + "</td>"
         + "<td>"
-        + "  <a href='/alert/" + doc.id + "?aid=" + doc.id + "&uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + log + "&lat=" + lat + "&audio=" + audio + "&open=" + alertData.open + "'>Ver Alerta</a>"
+        + "  <a href='/alert/" + doc.id + "?aid=" + doc.id + "&uid=" + alertData.usuarioKey + "&dateTime=" + dateTime + "&log=" + log + "&lat=" + lat + "&audio=" + audio + "&open=" + alertData.open + "&obs=" + alertData.obs + "'>Ver Alerta</a>"
         + resolv
         + "</td></tr>";
 }
@@ -562,7 +575,7 @@ function loadAlerts(db) {
 
     var alertasResolvidos = 0;
     var alertasAbertos = 0;
-    loadCollection(db, "ALERTAS", (list) => {
+    loadCollection(db, "ALERTAS", false, (list) => {
         alertasAbertos = 0;
         alertasResolvidos = 0;
         alertTable.innerHTML = "";
@@ -579,7 +592,7 @@ function loadAlerts(db) {
             loadDocument(db, "USUARIOS", alerta.usuarioKey, (userDoc) => {
                 if (userDoc.exists) {
                     var user = userDoc.data();
-                    setValList("a_u" + alerta.usuarioKey, user.name);
+                    setValList("a_u" + hashId(alerta.usuarioKey), user.name);
                 }
             });
 
@@ -616,13 +629,13 @@ var count = 0;
 function loadCountAlerts(db) {
     var alertasResolvidos = 0;
     var alertasAbertos = 0;
-    loadCollection(db, "ALERTAS", (list) => {
+    loadCollection(db, "ALERTAS", true, (list) => {
         alertasAbertos = 0;
         alertasResolvidos = 0;
         var tempCont = 0
         list.forEach((doc) => {
             var alerta = doc.data();
-            console.log("doc" + alerta.createdAt);
+            //console.log("doc" + alerta.createdAt);
             if (alerta.open == true) {
                 alertasAbertos++;
             } else {
@@ -639,6 +652,12 @@ function loadCountAlerts(db) {
         count = tempCont;
         setVal("alert-count", alertasAbertos);
         setVal("closed-alert-count", alertasResolvidos);
+
+        if (alertasAbertos != undefined && alertasAbertos > 0) {
+            swal("Você tem " + alertasAbertos + " alerta(s) aberto(s)!", {
+                icon: "success",
+            });
+        }
     });
 }
 
@@ -651,8 +670,8 @@ request.json().then(function(json) {
 */
 
 function getAdress(lat, log, callback) {
-    if (lat == null || log == null) {
-        callback(null);
+    if (lat == null || log == null || lat == undefined || log == undefined || lat == "" || log == "") {
+        //callback(null);
         return;
     }
     // var request = new Request("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + log + "&key=AIzaSyDzhOcTXKLgf5UrnmORdJWBtVZ8DiukMdU");

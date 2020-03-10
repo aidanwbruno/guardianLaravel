@@ -54,7 +54,7 @@ function closeAlert(id) {
                                         });
                                         setVal("st_a_" + id + "", "Resolvido");
                                         setTimeout(function () {
-                                            refresh();
+                                          window.location.reload(false);
                                             sortTable(0, 'tblAlertas');
                                         }, 2000);
                                     } else {
@@ -73,9 +73,7 @@ function closeAlert(id) {
 
 }
 
-setTimeout(function () {
-    sortTable(0, 'tblAlertas');
-}, 2000);
+
 
 
 
@@ -96,6 +94,7 @@ setTimeout(function () {
             <th>Última Localização</th>
             <th>Data/Hora</th>
             <th>Status</th>
+            <th>Observação</th>
             <th>Opções</th>
           </thead>
           <tbody id="tblAlertas">
